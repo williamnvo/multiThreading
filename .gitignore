@@ -41,3 +41,14 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.prefs
+bin/com/bms7/MainWindow.class
+*.class
+forms-1.3.0-src.zip
+target/classes/Beans.out.xml
+target/classes/Beans.xml
+target/classes/META-INF/MANIFEST.MF
+target/classes/META-INF/maven/multiThreading/multiThreading/pom.properties
+target/classes/META-INF/maven/multiThreading/multiThreading/pom.xml
+forms-1.3.0.jar
+src/Beans.out.xml
