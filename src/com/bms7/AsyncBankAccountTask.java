@@ -38,7 +38,6 @@ public class AsyncBankAccountTask implements Callable<BigDecimal> {
 				lock.lock();
 				System.out.println(String.format("Thread #%s acquires lock", threadNumber));
 
-
 				try {
 					List<BankAccount> accounts = dao.retrieve(accountNumber);
 					sleep();
