@@ -1,35 +1,37 @@
 package com.bms7;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import java.awt.Button;
-import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.awt.GridLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.factories.FormFactory;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+/***
+ * Main window.
+ * 
+ * @author William.Vo
+ *
+ */
 public class MainWindow {
 
 	private JFrame frame;
@@ -65,7 +67,7 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 341, 220);
+		frame.setBounds(100, 100, 423, 225);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -93,7 +95,7 @@ public class MainWindow {
 		frame.getContentPane().add(numberOfThreadsField, "4, 2, fill, default");
 		numberOfThreadsField.setColumns(2);
 		
-		JButton btnDelete = new JButton("Delete All");
+		JButton btnDelete = new JButton("Delete All Existing Accounts");
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteAll();
@@ -101,7 +103,7 @@ public class MainWindow {
 		});
 		frame.getContentPane().add(btnDelete, "4, 4");
 		
-		JButton btnInsert = new JButton("Insert");
+		JButton btnInsert = new JButton("New accounts and deposit");
 		frame.getContentPane().add(btnInsert, "4, 6");
 		
 		btnInsert.addActionListener(new ActionListener() {
@@ -111,9 +113,13 @@ public class MainWindow {
 		});
 	}
 	
+	/***
+	 * Create an account with a random unique account number.
+	 * @return
+	 */
 	private BankAccount createAccount(){
 		BankAccount account = new BankAccount();
-		String accountNumber = String.valueOf(Math.random());
+		String accountNumber = UUID.randomUUID().toString();
 		account.setAccountNumber(accountNumber);
 		account.setBalance(BigDecimal.ZERO);
 		ClwDao dao = (ClwDao) context.getBean("clwDao");
@@ -121,6 +127,14 @@ public class MainWindow {
 		return account;
 	}
 	
+	/***
+	 * Create 10 tasks to add $1 to 1 account and another task to add $1 to another account.
+	 * 
+	 * The purpose of this exercise is to prove that 10 threads simultaneously update a record without
+	 * any deadlock by using locks.
+	 * 
+	 * 
+	 */
 	private void insert(){
 		ExecutorService executor = Executors.newCachedThreadPool();
 		try {
@@ -150,9 +164,7 @@ public class MainWindow {
 			for (FutureTask<BigDecimal> futureTask : futureTasks) {
 				try {
 					futureTask.get();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
