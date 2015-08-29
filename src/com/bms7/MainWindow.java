@@ -30,6 +30,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+/***
+ * Main window.
+ * 
+ * @author William.Vo
+ *
+ */
 public class MainWindow {
 
 	private JFrame frame;
